@@ -7,9 +7,19 @@
 
 template <typename T, int n>
 class Node {
+private:
+    int size;
 public:
-    T* keys;
-    Node<T, n>** nodes;
+    Node();
+    Node(const Node& node);
+    T * keys;
+    Node<T, n> ** nodes;
+    void Insert(const T);
+    void Delete(const T);
+    Node Find(const T) const;
+    Node& operator+(const Node& node) const;
+    Node& operator=(const Node& node);
+    ~Node();
 };
 
 template <typename T, int n>
@@ -23,8 +33,9 @@ public:
     void Insert(const T);
     void Delete(const T);
     Node Find(const T) const;
-    BTree operator+(const BTree tree) const;
-    void operator=(const BTree tree);
+    BTree& operator+(const BTree& tree) const;
+    Node& operator=(const BTree& tree);
+    ~BTree();
 };
 
 

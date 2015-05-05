@@ -32,10 +32,12 @@ int main() {
     test_6.Insert(*a); test_6.Insert(*b); test_6.Insert(*c);
 
     // Delete data
+    /*
     integer_2.Delete(5);
     double_4.Delete(3.45);
     char_2.Delete('a');
     test_6.Delete(*a);
+     */
 
     // Clean up
     delete a; delete b; delete c;

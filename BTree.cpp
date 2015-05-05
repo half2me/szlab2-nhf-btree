@@ -18,9 +18,9 @@ Node<T, n>::Node() {
 }
 
 template <typename T, int n>
-Node<T, n>::Node(const Node& node) {
+Node::Node(const Node<T, n>& node) {
     keys = new T[2*n];
-    nodes = new Node*[2*n + 1];
+    nodes = new Node<T, n>*[2*n + 1];
     for(int i=0; i<(2*n + 1); i++){
         nodes[i] = 0;
     }
@@ -33,7 +33,7 @@ Node<T, n>::Node(const Node& node) {
 }
 
 template <typename T, int n>
-Node& Node<T, n>::operator=(const Node& node){
+Node<T, n>& Node::operator=(const Node& node){
     for(size = 0; size < node.size; size++){
         keys[size] = node.keys[size];
         nodes[size] = node.nodes[size];
@@ -42,7 +42,7 @@ Node& Node<T, n>::operator=(const Node& node){
 }
 
 template <typename T, int n>
-void Node<T, n>::Insert(const T data){
+void Node::Insert(const T data){
     if(size == 0){
         // Empty node
         keys[0] = data;
@@ -103,7 +103,7 @@ void Node<T, n>::Insert(const T data){
 }
 
 template <typename T, int n>
-Node<T, n>::~Node(){
+Node::~Node(){
     for(int i=0; i<2*n+1; i++){
         if(nodes[i] != 0){
             delete nodes[i]; // Free up linked nodes

@@ -105,6 +105,11 @@ void Node<T, n>::Insert(const T data){
 template <typename T, int n>
 Node<T, n>::~Node(){
     for(int i=0; i<2*n+1; i++){
-        // TODO:
+        if(nodes[i] != 0){
+            delete nodes[i]; // Free up linked nodes
+        }
+        // Free up self
+        delete[] keys;
+        delete[] nodes;
     }
 }

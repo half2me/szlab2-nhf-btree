@@ -9,7 +9,7 @@ template <typename T, int n>
 class Node {
 private:
     int size;
-    T * keys;
+    T* keys;
     Node<T, n> ** nodes;
 public:
     Node(){
@@ -54,13 +54,14 @@ public:
                         }
                         else{
                             // Node is not full, add key to node
-                            T tmp[2*n+1];
+                            T tmp[2*n];
                             for(int j = i; j<size; j++){
                                 tmp[j] = keys[j];
                             }
                             keys[i] = data;
-                            for(int j = i+1; j<size; j++){
-                                keys[j] = tmp[j];
+                            int j;
+                            for(j=i+1; j<=size; j++){
+                                keys[j] = tmp[j-1];
                             }
                             size++;
                         }
@@ -108,14 +109,14 @@ public:
     }
 
     ~Node(){
-        for(int i=0; i<2*n+1; i++){
+        for(int i=0; i<(2*n+1); i++){
             if(nodes[i] != 0){
                 delete nodes[i]; // Free up linked nodes
             }
-            // Free up self
-            delete[] keys;
-            delete[] nodes;
         }
+        // Free up self
+        delete[] keys;
+        delete[] nodes;
     }
 };
 

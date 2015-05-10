@@ -14,6 +14,71 @@ private:
     Node<T, n> * parent;
     enum NodeType{NODE, LEAF};
     NodeType type;
+
+    void Split(const T& data, Node<T, n>* right = 0){
+        if(size == 2*n){
+            // Full, lets split
+            if(parent == 0){
+                // Root node split
+
+            }
+            // Split simple node
+            T tmp[2*n+1];
+            for(int i=0; i<2*n+1;i++){
+                if(keys[i] > data){
+                    // Upper bound found
+                    for(int j=0; j<i;j++){
+                        tmp[j] = keys[j];
+                    }
+                    tmp[i] = data;
+                    for(int j=i+1; j<2*n+1; j++){
+                        tmp[j = keys[j]];
+                    }
+                    break;
+                }
+            }
+            for(int i=0; i<n; i++){
+                keys[i] = tmp[i];
+            }
+            size = n;
+            Node<T,n>* r = new Node<T, n>;
+            for(int i=0; i<n; i++){
+                r->keys[i] = tmp[i+1+n];
+            }
+            r->parent = parent;
+            r->size = n;
+            parent->Split(tmp[n], r);
+        }
+        else{
+            // data fits, just insert
+            for(int i=0; i<size; i++){
+                if(keys[i] > data){
+                    // Upper bound found
+                    T tmp[2*n];
+                    Node<T, n>* tmp2[2*n+1];
+                    for(int j = i; j<size; j++){
+                        tmp[j] = keys[j];
+                        tmp2[j] = nodes[j];
+                    }
+                    tmp2[size+1] = nodes[size+1];
+                    keys[i] = data;
+                    nodes[i+1] = right;
+                    int j;
+                    for(j=i+1; j<=size; j++){
+                        keys[j] = tmp[j-1];
+                        nodes[i+1] = tmp[j];
+                    }
+                    size++;
+                    return;
+                }
+            }
+            // insert data after last block
+            keys[size] = data;
+            size++;
+            nodes[size+1] = right;
+        }
+    }
+
 public:
     Node(){
         type = NODE;
@@ -42,7 +107,15 @@ public:
         nodes[size] = node.nodes[size];
     }
 
-    void Split(const T& data, Node<T, n>& node);
+    int Height(){
+        if(type = LEAF) return 1;
+        for(int i = 0; i<size; i++){
+            if(nodes[i] != 0){
+                return nodes[i]->Height();
+            }
+        }
+        throw "Internal Error";
+    }
 
     void Insert(const T& data){
         for(int i=0; i<size; i++){
@@ -51,11 +124,11 @@ public:
                 if(type == LEAF){
                     if(size == 2*n){
                         // Leaf is full
-                        return Split(data, (Node<T, n> &) this);
+                        return this->Split(data);
                     }
                     else{
                         // Leaf is not full, add key
-                        T tmp[2*n];
+                        T tmp;
                         for(int j = i; j<size; j++){
                             tmp[j] = keys[j];
                         }
@@ -79,7 +152,7 @@ public:
         if(type = LEAF){
             if(size == 2*n){
                 // Leaf is full, split
-                return Split(data, (Node<T, n> &) this);
+                return this->Split(data);
             }
             else{
                 // Leaf is not full, add key

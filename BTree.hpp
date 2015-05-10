@@ -35,7 +35,7 @@ public:
         nodes[size] = node.nodes[size];
     }
 
-    void Insert(const T data){
+    void Insert(const T& data){
         if(size == 0){
             // Empty node
             keys[0] = data;
@@ -96,9 +96,72 @@ public:
         }
     }
 
-    void Delete(const T);
-    Node Find(const T) const;
-    Node<T, n>& operator+(const Node<T, n>&) const;
+    Node<T, n>& Find(const T& data) const{
+        if(size == 0){
+            // Empty node
+            throw "Not found!";
+        }
+        else{
+            for(int i=0; i<size; i++){
+                if(keys[i] > data){
+                    // Upper bound found, lets go down the line
+                    if(nodes[i] == 0){
+                        // No more linked nodes in our path
+                        throw "Not found!";
+                    }
+                    else{
+                        // Search must continue in a linked node
+                        return nodes[i]->Find(data);
+                    }
+                }
+                if(keys[i] == data) return (Node<T, n> &) this; // key found!!
+            }
+            // check after last key
+            if(nodes[size] == 0){
+                // No more linked nodes in our path
+                throw "Not found!";
+            }
+            else{
+                // Pass to next linked node
+                nodes[size]->Insert(data);
+            }
+        }
+    }
+
+    void Delete(const T& data){
+        Node* tmp;
+        try {
+            return Delete(data, Find(data));
+        } catch (char* s){
+            throw s;
+        }
+    }
+
+    void Delete(const T& data, Node <T, n>& node){
+        int num;
+
+        for(int i=0; i<node.size; i++){
+            if(node.keys[i] == data){
+                num = i;
+            }
+        }
+        // TODO: finish delete algorythm
+    }
+
+    void Delete(Node<T, n>& node){
+        for(int i=0; i<=size; i++){
+            if(nodes[i] == (Node<T, n>*) node){
+                delete nodes[i];
+                nodes[i] = 0;
+                return;
+            }
+            if(nodes[i] != 0){
+                // Go down the line
+                return Delete(*nodes[i]);
+            }
+        }
+        throw "Node not found!";
+    }
 
     Node<T, n>& operator=(const Node<T, n>& node){
         for(size = 0; size < node.size; size++){

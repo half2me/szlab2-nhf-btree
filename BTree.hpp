@@ -20,31 +20,79 @@ private:
             // Full, lets split
             if(parent == 0){
                 // Root node split
-
+                Node<T, n> *leftNode = new Node<T, n>();
+                Node<T, n> *rightNode = new Node<T, n>();
+                leftNode->parent = (Node<T, n>*) this;
+                rightNode->parent = (Node<T, n>*) this;
+                type = NODE;
+                T tmp[2*n+1];
+                Node<T, n>* tmp2[2*n+2];
+                int i, j;
+                for(i=0; i<2*n+1;i++){
+                    if(keys[i] > data) break;
+                }
+                // insert at i
+                for(j=0; j<i;j++){
+                    tmp[j] = keys[j];
+                    tmp2[j] = nodes[j];
+                }
+                tmp2[i] = nodes[j];
+                tmp[i] = data;
+                tmp2[i+1] = right;
+                for(int j=i+1; j<2*n+1; j++){
+                    tmp[j] = keys[j-1];
+                    tmp2[j+1] = nodes[j];
+                }
+                // Copy sorted data to left, right nodes
+                for(i = 0; i<n; i++){
+                    leftNode->keys[i] = tmp[i];
+                    leftNode->nodes[i] = tmp2[i];
+                }
+                leftNode->nodes[i] = tmp2[i];
+                leftNode->size = n;
+                for(i = n; i<2*n; i++){
+                    rightNode->keys[i-n] = tmp[i];
+                    rightNode->nodes[i-n] = tmp2[i];
+                }
+                rightNode->nodes[i-n] = tmp2[i];
+                rightNode->size = n;
+                // link nodes
+                nodes[0] = leftNode;
+                nodes[1] = rightNode;
+                keys[0] = data;
+                size = 1;
             }
             // Split simple node
             T tmp[2*n+1];
-            for(int i=0; i<2*n+1;i++){
-                if(keys[i] > data){
-                    // Upper bound found
-                    for(int j=0; j<i;j++){
-                        tmp[j] = keys[j];
-                    }
-                    tmp[i] = data;
-                    for(int j=i+1; j<2*n+1; j++){
-                        tmp[j = keys[j]];
-                    }
-                    break;
-                }
+            Node<T, n>* tmp2[2*n+2];
+            int i, j;
+            for(i=0; i<2*n+1;i++){
+                if(keys[i] > data) break;
+            }
+            // insert at i
+            for(j=0; j<i;j++){
+                tmp[j] = keys[j];
+                tmp2[j] = nodes[j];
+            }
+            tmp2[i] = nodes[j];
+            tmp[i] = data;
+            tmp2[i+1] = right;
+            for(int j=i+1; j<2*n+1; j++){
+                tmp[j] = keys[j-1];
+                tmp2[j+1] = nodes[j];
             }
             for(int i=0; i<n; i++){
                 keys[i] = tmp[i];
+                nodes[i] = tmp2[i];
             }
+            nodes[i] = tmp2[i];
             size = n;
             Node<T,n>* r = new Node<T, n>;
             for(int i=0; i<n; i++){
                 r->keys[i] = tmp[i+1+n];
+                r->nodes[i] = tmp2[i+1+n];
             }
+            r->nodes[n] = tmp2[2*n];
             r->parent = parent;
             r->size = n;
             parent->Split(tmp[n], r);
@@ -66,7 +114,7 @@ private:
                     int j;
                     for(j=i+1; j<=size; j++){
                         keys[j] = tmp[j-1];
-                        nodes[i+1] = tmp[j];
+                        nodes[i+1] = tmp2[j];
                     }
                     size++;
                     return;
@@ -81,7 +129,7 @@ private:
 
 public:
     Node(){
-        type = NODE;
+        type = LEAF;
         parent = 0;
         size = 0;
         keys = new T[2*n];
@@ -108,7 +156,7 @@ public:
     }
 
     int Height(){
-        if(type = LEAF) return 1;
+        if(type == LEAF) return 1;
         for(int i = 0; i<size; i++){
             if(nodes[i] != 0){
                 return nodes[i]->Height();
@@ -128,7 +176,7 @@ public:
                     }
                     else{
                         // Leaf is not full, add key
-                        T tmp;
+                        T tmp[2*n];
                         for(int j = i; j<size; j++){
                             tmp[j] = keys[j];
                         }
@@ -149,7 +197,7 @@ public:
             if(keys[i] == data) throw "Duplicate key!"; // duplicate key!
         }
         // Insert data after last key or empty root node
-        if(type = LEAF){
+        if(type == LEAF){
             if(size == 2*n){
                 // Leaf is full, split
                 return this->Split(data);

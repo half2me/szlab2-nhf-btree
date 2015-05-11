@@ -28,7 +28,7 @@ private:
                 T tmp[2*n+1];
                 Node<T, n>* tmp2[2*n+2];
                 int i, j;
-                for(i=0; i<2*n+1;i++){
+                for(i=0; i<2*n;i++){
                     if(keys[i] > data) break;
                 }
                 // insert at i
@@ -50,17 +50,18 @@ private:
                 }
                 leftNode->nodes[i] = tmp2[i];
                 leftNode->size = n;
-                for(i = n; i<2*n; i++){
-                    rightNode->keys[i-n] = tmp[i];
-                    rightNode->nodes[i-n] = tmp2[i];
+                for(i = 0; i<n; i++){
+                    rightNode->keys[i] = tmp[i+n+1];
+                    rightNode->nodes[i] = tmp2[i+n+1];
                 }
-                rightNode->nodes[i-n] = tmp2[i];
+                rightNode->nodes[i] = tmp2[i+n+1];
                 rightNode->size = n;
                 // link nodes
                 nodes[0] = leftNode;
                 nodes[1] = rightNode;
-                keys[0] = data;
+                keys[0] = tmp[n];
                 size = 1;
+                return;
             }
             // Split simple node
             T tmp[2*n+1];

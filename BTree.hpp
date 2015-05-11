@@ -40,9 +40,9 @@ private:
                     tmp[j] = keys[j];
                     tmp2[j] = nodes[j];
                 }
-                tmp2[i] = nodes[j];
-                tmp[i] = data;
-                tmp2[i+1] = right;
+                tmp2[j] = nodes[j];
+                tmp[j] = data;
+                tmp2[j+1] = right;
                 for(int j=i+1; j<2*n+1; j++){
                     tmp[j] = keys[j-1];
                     tmp2[j+1] = nodes[j];

@@ -2,8 +2,12 @@
 // Created by Benjamin Tamási on 27/04/15.
 //
 
+
 #ifndef SZLAB2_NHF_BTREE_BTREE_H
 #define SZLAB2_NHF_BTREE_BTREE_H
+
+#include <iostream>
+using namespace std;
 
 template <typename T, int n>
 class Node {
@@ -286,6 +290,8 @@ public:
         nodes[size] = node.nodes[size];
     }
 
+    friend ostream& operator<<(ostream& out, const Node<T, n> & node);
+
     ~Node(){
         for(int i=0; i<(2*n+1); i++){
             if(nodes[i] != 0){
@@ -297,6 +303,21 @@ public:
         delete[] nodes;
     }
 };
+
+template <typename T, int n>
+ostream& operator<<(ostream& out, const Node<T, n> & node){
+    out << "[Node]" << endl;
+    for(int i=0; i<node.size; i++){
+        if(node.nodes[i] !=0){
+            out << node.nodes[i];
+        }
+        out << node.keys[i];
+    }
+    if(node.nodes[node.size] != 0){
+        out << node.nodes[node.size];
+    }
+    return out;
+}
 
 
 #endif //SZLAB2_NHF_BTREE_BTREE_H

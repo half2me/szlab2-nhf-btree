@@ -290,7 +290,8 @@ public:
         nodes[size] = node.nodes[size];
     }
 
-    friend ostream& operator<<(ostream& out, const Node<T, n> & node);
+    template <typename U, int k>
+    friend ostream& operator<<(ostream& out, const Node<U, k> & node);
 
     ~Node(){
         for(int i=0; i<(2*n+1); i++){
@@ -309,12 +310,13 @@ ostream& operator<<(ostream& out, const Node<T, n> & node){
     out << "[Node]" << endl;
     for(int i=0; i<node.size; i++){
         if(node.nodes[i] !=0){
-            out << node.nodes[i];
+            out << node.nodes[i] << endl;
         }
-        out << node.keys[i];
+        out << node.keys[i] << endl;
+
     }
     if(node.nodes[node.size] != 0){
-        out << node.nodes[node.size];
+        out << node.nodes[node.size] << endl;
     }
     return out;
 }

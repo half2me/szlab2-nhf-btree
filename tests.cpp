@@ -36,13 +36,13 @@ int main() {
     // Shuffle them
 
     // Insert them
-    for(int i=0; i<100; i++){
+    for(int i=0; i<6; i++){
         integer_1.Insert(tmp[i]);
-        cout << integer_1;
-        integer_2.Insert(tmp[i]);
-        integer_3.Insert(tmp[i]);
-        integer_4.Insert(tmp[i]);
+        //integer_2.Insert(tmp[i]);
+        //integer_3.Insert(tmp[i]);
+        //integer_4.Insert(tmp[i]);
     }
+    //cout << integer_1;
 
     /*
     double_4.Insert(3.45); double_4.Insert(2.87); double_4.Insert(3.87);

@@ -294,12 +294,11 @@ public:
     friend ostream& operator<<(ostream& out, const Node<U, k> & node);
 
     ~Node(){
-        for(int i=0; i<(2*n+1); i++){
-            if(nodes[i] != 0){
+        if(type == NODE){
+            for(int i=0; i<(2*n+1); i++){
                 delete nodes[i]; // Free up linked nodes
             }
         }
-        // Free up self
         delete[] keys;
         delete[] nodes;
     }

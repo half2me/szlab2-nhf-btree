@@ -128,7 +128,7 @@ private:
             // insert data after last block
             keys[size] = data;
             size++;
-            nodes[size+1] = right;
+            nodes[size] = right;
         }
     }
 

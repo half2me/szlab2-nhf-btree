@@ -36,7 +36,7 @@ int main() {
     // Shuffle them
 
     // Insert them
-    for(int i=0; i<4; i++){
+    for(int i=0; i<7; i++){
         integer_1.Insert(tmp[i]);
         //integer_2.Insert(tmp[i]);
         //integer_3.Insert(tmp[i]);

@@ -9,6 +9,8 @@
 #include <iostream>
 using namespace std;
 
+enum NodeType{NODE, LEAF};
+
 template <typename T, int n>
 class Node {
 private:
@@ -16,7 +18,6 @@ private:
     T* keys;
     Node<T, n> ** nodes;
     Node<T, n> * parent;
-    enum NodeType{NODE, LEAF};
     NodeType type;
 
     void Split(const T& data, Node<T, n>* right = 0){
@@ -97,7 +98,7 @@ private:
                 r->keys[i] = tmp[i+1+n];
                 r->nodes[i] = tmp2[i+1+n];
             }
-            r->nodes[n] = tmp2[2*n];
+            r->nodes[n] = tmp2[2*n+1];
             r->parent = parent;
             r->size = n;
             parent->Split(tmp[n], r);
@@ -111,17 +112,15 @@ private:
                     Node<T, n>* tmp2[2*n+1];
                     for(int j = i; j<size; j++){
                         tmp[j] = keys[j];
-                        tmp2[j] = nodes[j];
+                        tmp2[j+1] = nodes[j+1];
                     }
-                    tmp2[size+1] = nodes[size+1];
                     keys[i] = data;
                     nodes[i+1] = right;
-                    int j;
-                    for(j=i+1; j<=size; j++){
-                        keys[j] = tmp[j-1];
-                        nodes[i+1] = tmp2[j];
-                    }
                     size++;
+                    for(int j=i+1; j<size; j++){
+                        keys[j] = tmp[j-1];
+                        nodes[j+1] = tmp2[j];
+                    }
                     return;
                 }
             }
@@ -308,11 +307,12 @@ template <typename T, int n>
 ostream& operator<<(ostream& out, const Node<T, n> & node){
     out << "{";
     for(int i=0; i<node.size; i++){
-        if(node.nodes[i] !=0){
-            out << *node.nodes[i] << ",";
+        if(node.type == NODE){
+            if(node.nodes[i] !=0){
+                out << *node.nodes[i] << ",";
+            }
         }
         out << node.keys[i] << ",";
-
     }
     if(node.nodes[node.size] != 0){
         out << *node.nodes[node.size] << ",";

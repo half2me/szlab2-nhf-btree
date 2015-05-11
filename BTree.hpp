@@ -71,7 +71,7 @@ private:
             T tmp[2*n+1];
             Node<T, n>* tmp2[2*n+2];
             int i, j;
-            for(i=0; i<2*n+1;i++){
+            for(i=0; i<2*n;i++){
                 if(keys[i] > data) break;
             }
             // insert at i
@@ -307,18 +307,18 @@ public:
 
 template <typename T, int n>
 ostream& operator<<(ostream& out, const Node<T, n> & node){
-    out << "[Node]" << endl;
+    out << "{";
     for(int i=0; i<node.size; i++){
         if(node.nodes[i] !=0){
-            out << node.nodes[i] << endl;
+            out << *node.nodes[i] << ",";
         }
-        out << node.keys[i] << endl;
+        out << node.keys[i] << ",";
 
     }
     if(node.nodes[node.size] != 0){
-        out << node.nodes[node.size] << endl;
+        out << *node.nodes[node.size] << ",";
     }
-    return out;
+    return out << "}";
 }
 
 

@@ -66,6 +66,19 @@ private:
                 nodes[1] = rightNode;
                 keys[0] = tmp[n];
                 size = 1;
+                // Set nodetype
+                for(int i=0; i<=leftNode->size; i++){
+                    if(leftNode->nodes[i] != 0){
+                        leftNode->type = NODE;
+                        break;
+                    }
+                }
+                for(int i=0; i<=rightNode->size; i++){
+                    if(rightNode->nodes[i] != 0){
+                        rightNode->type = NODE;
+                        break;
+                    }
+                }
                 return;
             }
             // Split simple node
@@ -294,7 +307,7 @@ public:
 
     ~Node(){
         if(type == NODE){
-            for(int i=0; i<(2*n+1); i++){
+            for(int i=0; i<=size; i++){
                 delete nodes[i]; // Free up linked nodes
             }
         }

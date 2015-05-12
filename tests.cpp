@@ -25,8 +25,8 @@ int main() {
     Node<int, 4> integer_4;
 
     // Generate some test numbers
-    int tmp[100];
-    for(int i=0; i<100; i++){
+    int tmp[50];
+    for(int i=0; i<50; i++){
         tmp[i] = i;
     }
     // Shuffle them
@@ -35,20 +35,20 @@ int main() {
     // Insert them
 
     cout << "[Test Numbers]: ";
-    for(int i=0; i<7; i++){
+    for(int i=0; i<50; i++){
         integer_1.Insert(tmp[i]);
-        //integer_2.Insert(tmp[i]);
-        //integer_3.Insert(tmp[i]);
-        //integer_4.Insert(tmp[i]);
+        integer_2.Insert(tmp[i]);
+        integer_3.Insert(tmp[i]);
+        integer_4.Insert(tmp[i]);
         cout << tmp[i] << " ";
         cout.flush();
     }
     cout << endl;
 
     cout << integer_1 << endl;
-    //cout << integer_2 << endl;
-    //cout << integer_3 << endl;
-    //cout << integer_4 << endl;
+    cout << integer_2 << endl;
+    cout << integer_3 << endl;
+    cout << integer_4 << endl;
     cout.flush();
 
     return 0;

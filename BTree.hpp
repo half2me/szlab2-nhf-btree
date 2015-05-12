@@ -90,18 +90,18 @@ private:
             tmp2[i] = nodes[j];
             tmp[i] = data;
             tmp2[i+1] = right;
-            for(int j=i+1; j<2*n+1; j++){
+            for(j=i+1; j<2*n+1; j++){
                 tmp[j] = keys[j-1];
                 tmp2[j+1] = nodes[j];
             }
-            for(int i=0; i<n; i++){
-                keys[i] = tmp[i];
-                nodes[i] = tmp2[i];
+            for(j=0; j<n; j++){
+                keys[j] = tmp[j];
+                nodes[j] = tmp2[j];
             }
-            nodes[i] = tmp2[i];
+            nodes[j] = tmp2[j];
             size = n;
             Node<T,n>* r = new Node<T, n>;
-            for(int i=0; i<n; i++){
+            for(i=0; i<n; i++){
                 r->keys[i] = tmp[i+1+n];
                 r->nodes[i] = tmp2[i+1+n];
             }

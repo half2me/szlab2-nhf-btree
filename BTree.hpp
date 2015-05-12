@@ -9,8 +9,6 @@
 #include <iostream>
 using namespace std;
 
-enum NodeType{NODE, LEAF};
-
 template <typename T, int n>
 class Node {
 private:
@@ -18,7 +16,6 @@ private:
     T* keys;
     Node<T, n> ** nodes;
     Node<T, n> * parent;
-    NodeType type;
 
     void Split(const T& data, Node<T, n>* right = 0){
         if(size == 2*n){
@@ -29,7 +26,6 @@ private:
                 Node<T, n> *rightNode = new Node<T, n>();
                 leftNode->parent = (Node<T, n>*) this;
                 rightNode->parent = (Node<T, n>*) this;
-                type = NODE;
                 T tmp[2*n+1];
                 Node<T, n>* tmp2[2*n+2];
                 int i, j;
@@ -66,19 +62,6 @@ private:
                 nodes[1] = rightNode;
                 keys[0] = tmp[n];
                 size = 1;
-                // Set nodetype
-                for(int i=0; i<=leftNode->size; i++){
-                    if(leftNode->nodes[i] != 0){
-                        leftNode->type = NODE;
-                        break;
-                    }
-                }
-                for(int i=0; i<=rightNode->size; i++){
-                    if(rightNode->nodes[i] != 0){
-                        rightNode->type = NODE;
-                        break;
-                    }
-                }
                 // Child nodes still point to root node, lets fix this
                 for(int i=0; i<=leftNode->size; i++){
                     if(leftNode->nodes[i] != 0){
@@ -125,6 +108,8 @@ private:
             r->nodes[n] = tmp2[2*n+1];
             r->parent = parent;
             r->size = n;
+            // if we are splitting a node, r might be node too
+
             parent->Split(tmp[n], r);
         }
         else{
@@ -157,7 +142,6 @@ private:
 
 public:
     Node(){
-        type = LEAF;
         parent = 0;
         size = 0;
         keys = new T[2*n];
@@ -169,7 +153,6 @@ public:
 
     Node(const Node<T, n>& node){
         parent = node.parent;
-        type = node.type;
         keys = new T[2*n];
         nodes = new Node<T, n>*[2*n + 1];
         for(int i=0; i<(2*n + 1); i++){
@@ -184,7 +167,7 @@ public:
     }
 
     int Height(){
-        if(type == LEAF) return 1;
+        if(isLeaf()) return 1;
         for(int i = 0; i<size; i++){
             if(nodes[i] != 0){
                 return 1 + nodes[i]->Height();
@@ -197,7 +180,7 @@ public:
         for(int i=0; i<size; i++){
             if(keys[i] > data){
                 // Key needs to be inserted before keys[i]
-                if(type == LEAF){
+                if(isLeaf()){
                     if(size == 2*n){
                         // Leaf is full
                         return this->Split(data);
@@ -225,7 +208,7 @@ public:
             if(keys[i] == data) throw "Duplicate key!"; // duplicate key!
         }
         // Insert data after last key or empty root node
-        if(type == LEAF){
+        if(isLeaf()){
             if(size == 2*n){
                 // Leaf is full, split
                 return this->Split(data);
@@ -303,9 +286,17 @@ public:
         throw "Node not found!";
     }
 
+    bool isLeaf() const{
+        for(int i=0; i<=size; i++){
+            if(nodes[i] != 0){
+                return false;
+            }
+        }
+        return true;
+    }
+
     Node<T, n>& operator=(const Node<T, n>& node){
         parent = node.parent;
-        type = node.type;
         for(size = 0; size < node.size; size++){
             keys[size] = node.keys[size];
             nodes[size] = new Node<T, n>((const Node<T, n> &) node.nodes[size]);
@@ -317,7 +308,7 @@ public:
     friend ostream& operator<<(ostream& out, const Node<U, k> & node);
 
     ~Node(){
-        if(type == NODE){
+        if(!isLeaf()){
             for(int i=0; i<=size; i++){
                 delete nodes[i]; // Free up linked nodes
             }
@@ -331,7 +322,7 @@ template <typename T, int n>
 ostream& operator<<(ostream& out, const Node<T, n> & node){
     out << "{";
     for(int i=0; i<node.size; i++){
-        if(node.type == NODE){
+        if(!node.isLeaf()){
             if(node.nodes[i] !=0){
                 out << *node.nodes[i] << ",";
             }

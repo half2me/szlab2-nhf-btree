@@ -1,4 +1,6 @@
 #include <iostream>
+#include <algorithm>
+#include <random>
 #include "BTree.hpp"
 
 using namespace std;
@@ -30,26 +32,29 @@ int main() {
         tmp[i] = i;
     }
     // Shuffle them
-    //random_shuffle(begin(tmp), end(tmp));
+    std::random_device rd;
+    std::mt19937 g(rd());
+    shuffle(begin(tmp), end(tmp), g);
 
     // Insert them
 
     cout << "[Test Numbers]: ";
     for(int i=0; i<50; i++){
         integer_1.Insert(tmp[i]);
-        integer_2.Insert(tmp[i]);
-        integer_3.Insert(tmp[i]);
-        integer_4.Insert(tmp[i]);
+        //integer_2.Insert(tmp[i]);
+        //integer_3.Insert(tmp[i]);
+        //integer_4.Insert(tmp[i]);
         cout << tmp[i] << " ";
         cout.flush();
     }
     cout << endl;
 
     cout << integer_1 << endl;
-    cout << integer_2 << endl;
-    cout << integer_3 << endl;
-    cout << integer_4 << endl;
-    cout.flush();
+    cout << "Height: " << integer_1.Height();
+    //cout << integer_2 << endl;
+    //cout << integer_3 << endl;
+    //cout << integer_4 << endl;
+    //cout.flush();
 
     return 0;
 }

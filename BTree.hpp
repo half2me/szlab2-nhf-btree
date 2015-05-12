@@ -79,6 +79,17 @@ private:
                         break;
                     }
                 }
+                // Child nodes still point to root node, lets fix this
+                for(int i=0; i<=leftNode->size; i++){
+                    if(leftNode->nodes[i] != 0){
+                        leftNode->nodes[i]->parent = leftNode;
+                    }
+                }
+                for(int i=0; i<=rightNode->size; i++){
+                    if(rightNode->nodes[i] != 0){
+                        rightNode->nodes[i]->parent = rightNode;
+                    }
+                }
                 return;
             }
             // Split simple node
@@ -176,7 +187,7 @@ public:
         if(type == LEAF) return 1;
         for(int i = 0; i<size; i++){
             if(nodes[i] != 0){
-                return nodes[i]->Height();
+                return 1 + nodes[i]->Height();
             }
         }
         throw "Internal Error";

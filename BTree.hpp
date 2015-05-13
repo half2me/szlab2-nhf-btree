@@ -157,6 +157,111 @@ private:
         }
     }
 
+    void Balance(){
+        if(size < n && parent != 0){
+            if(size == 0){
+                // TODO: Handle empty nodes
+            }
+            // Underflow
+            int index = parent->Index(*this);
+            if(index != parent->size){
+                // We have a right neighbor
+                if(parent->nodes[index+1]->size > n){
+                    // rotate left
+                    keys[size] = parent->keys[index]; // Get parent's divider as our key
+                    size++;
+                    parent->keys[index] = parent->nodes[index+1]->keys[0]; // Set parent's divider to right neighbor's key
+                    parent->nodes[index+1]->Delete(parent->keys[index]); // Delete right neighbor's old key
+                    return;
+                }
+            }
+            else{
+                // We have a left neighbor
+                if(parent->nodes[index-1]->size > n){
+                    // rotate right
+                    for(int i=size; i > 0; i--){
+                        keys[i] = keys[i-1];
+                    }
+                    keys[0] = parent->keys[index-1]; // Get parent's divider as our key
+                    size++;
+                    parent->keys[index-1] = parent->nodes[index-1]->keys[parent->nodes[index-1]->size]; // Set parent
+                    parent->nodes[index-1]->Delete(parent->keys[index-1]); // Delete left neighbors old key
+                    return;
+                }
+            }
+            // Our neighbors don't have extra keys... lets merge :)
+            if(index != parent->size){
+                // Merge with right neighbor
+                Node<T, n>* neighbor = parent->nodes[index+1];
+                keys[size] = parent->keys[index];
+                size++;
+                int i;
+                for(i=0; i<neighbor->size; i++){
+                    keys[i+size] = neighbor->keys[i];
+                    nodes[i+size] = neighbor->nodes[i];
+                }
+                nodes[i+size] = neighbor->nodes[i]; // Copy last node
+                size += neighbor->size;
+
+                if(!neighbor->isLeaf()){
+                    // If neighbor is not a leaf, we need to sync changes to siblings
+                    // And reset all his nodes to 0 before we delete him
+                    for(i=0; i<=neighbor->size; i++){
+                        if(neighbor->nodes[i] !=0){
+                            neighbor->nodes[i]->parent = this;
+                            neighbor->nodes[i] = 0;
+                        }
+                    }
+                }
+
+                // Delete neighbor
+                parent->nodes[index+1] = 0;
+                delete neighbor;
+
+                // Delete stolen key from parent
+                parent->Delete(parent->keys[index]);
+            }
+            else{
+                // Merge with left neighbor
+                Node<T, n>* neighbor = parent->nodes[index-1];
+                neighbor->keys[neighbor->size] = parent->keys[index-1];
+                neighbor->size++;
+                int i;
+                for(i=0; i<size; i++){
+                    neighbor->keys[i+neighbor->size] = keys[i];
+                    neighbor->nodes[i+neighbor->size] = nodes[i];
+                }
+                neighbor->nodes[i+neighbor->size] = nodes[i]; // Copy last node
+                neighbor->size += size;
+
+                if(!isLeaf()){
+                    // If we are not a leaf, we need to sync changes to siblings
+                    // And reset all his nodes to 0 before we delete him
+                    for(i=0; i<=size; i++){
+                        if(nodes[i] !=0){
+                            nodes[i]->parent = neighbor;
+                            nodes[i] = 0;
+                        }
+                    }
+                }
+
+                // Delete ourselves
+                parent->nodes[index] = 0;
+                delete this;
+
+                // Delete stolen key from parent
+                neighbor->parent->Delete(neighbor->parent->keys[index]);
+            }
+        }
+    }
+
+    const int Index(const Node<T, n>& node) const{
+        for(int i=0; i<=size; i++){
+            if(nodes[i] == &node) return i;
+        }
+        throw "Node not found!";
+    }
+
 public:
     Node(){
         parent = 0;
@@ -183,7 +288,7 @@ public:
         nodes[size] = node.nodes[size];
     }
 
-    int Height(){
+    const int Height() const {
         if(isLeaf()) return 1;
         for(int i = 0; i<size; i++){
             if(nodes[i] != 0){
@@ -242,7 +347,7 @@ public:
         }
     }
 
-    Node<T, n>& Find(const T& data) const{
+    Node<T, n>& Find(const T& data){
         for(int i=0; i<size; i++){
             if(keys[i] > data){
                 // Upper bound found, lets go down the line
@@ -255,7 +360,7 @@ public:
                     return nodes[i]->Find(data);
                 }
             }
-            if(keys[i] == data) return (Node<T, n> &) this; // key found!!
+            if(keys[i] == data) return *this; // key found!!
         }
         // check after last key
         if(nodes[size] == 0){
@@ -266,41 +371,50 @@ public:
             // Pass to next linked node
             nodes[size]->Insert(data);
         }
+        throw "Not found!";
     }
 
     void Delete(const T& data){
-        Node* tmp;
-        try {
-            return Delete(data, Find(data));
-        } catch (char* s){
-            throw s;
-        }
-    }
+        if(!isLeaf()){
+            Node<T, n>* node = 0;
+            try{
+                node = &Find(data);
+            }
+            catch (char* ex){
+                throw ex;
+            }
 
-    void Delete(const T& data, Node <T, n>& node){
-        int num;
-
-        for(int i=0; i<node.size; i++){
-            if(node.keys[i] == data){
-                num = i;
+            if(node != this){
+                node->Delete(data);
+            }
+            else{
+                // Delete from internal node
+                int i;
+                for(i=0; i<size; i++){
+                    if(keys[i] == data){
+                        break;
+                    }
+                }
+                T max = nodes[i]->max();
+                keys[i] = max;
+                nodes[i]->Delete(max);
             }
         }
-        // TODO: finish delete algorithm
-    }
-
-    void Delete(Node<T, n>& node){
-        for(int i=0; i<=size; i++){
-            if(nodes[i] == (Node<T, n>*) node){
-                delete nodes[i];
-                nodes[i] = 0;
-                return;
+        else{
+            // Delete from leaf node
+            int i;
+            for(i=0; i<size; i++){
+                if(keys[i] == data){
+                    break;
+                }
             }
-            if(nodes[i] != 0){
-                // Go down the line
-                return Delete(*nodes[i]);
+            if(i>=size) throw "Key not found!";
+            size--;
+            for(; i<size; i++){
+                keys[i] = keys[i+1];
             }
+            Balance();
         }
-        throw "Node not found!";
     }
 
     bool isLeaf() const{
@@ -310,6 +424,15 @@ public:
             }
         }
         return true;
+    }
+
+    T max() const {
+        if(isLeaf()){
+            return keys[size-1];
+        }
+        else{
+            return nodes[size]->max();
+        }
     }
 
     Node<T, n>& operator=(const Node<T, n>& node){

@@ -63,12 +63,12 @@ private:
                 keys[0] = tmp[n];
                 size = 1;
                 // Child nodes still point to root node, lets fix this
-                for(int i=0; i<=leftNode->size; i++){
+                for(i=0; i<=leftNode->size; i++){
                     if(leftNode->nodes[i] != 0){
                         leftNode->nodes[i]->parent = leftNode;
                     }
                 }
-                for(int i=0; i<=rightNode->size; i++){
+                for(i=0; i<=rightNode->size; i++){
                     if(rightNode->nodes[i] != 0){
                         rightNode->nodes[i]->parent = rightNode;
                     }
@@ -108,8 +108,25 @@ private:
             r->nodes[n] = tmp2[2*n+1];
             r->parent = parent;
             r->size = n;
-            // if we are splitting a node, r might be node too
+            // sync child nodes' parent pointer if not leaf
 
+            /* enable if parent pointers are invalid
+            if(!isLeaf()){
+                for(i=0; i<=size; i++){
+                    if(nodes[i] !=0){
+                        nodes[i]->parent = this;
+                    }
+                }
+            }
+            */
+
+            if(!r->isLeaf()){
+                for(i=0; i<=r->size; i++){
+                    if(r->nodes[i] !=0){
+                        r->nodes[i]->parent = r;
+                    }
+                }
+            }
             parent->Split(tmp[n], r);
         }
         else{
